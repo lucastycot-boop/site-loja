@@ -14,7 +14,6 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # CONFIGURAÇÃO INTELIGENTE DO POSTGRESQL (LOCAL OU PRODUÇÃO)
-# Se a Render fornecer a URL do banco (DATABASE_URL), ele usa. Se não, usa o seu localhost.
 database_url = os.environ.get('DATABASE_URL')
 if database_url and database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
@@ -41,14 +40,20 @@ class Usuario(db.Model):
     eh_admin = db.Column(db.Boolean, default=False)
 
 class Produto(db.Model):
+    __tablename__ = 'produtos_v2'
+
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
     descricao = db.Column(db.Text, nullable=True)
     preco = db.Column(db.Float, nullable=False)
     estoque = db.Column(db.Integer, default=0)
     categoria = db.Column(db.String(50), nullable=True)
-    imagem_url = db.Column(db.String(200), nullable=True)
     tamanho = db.Column(db.String(10), nullable=True)
+
+    # As 3 colunas de imagem prontas para uso
+    imagem_url = db.Column(db.String(200), nullable=True)
+    imagem_url2 = db.Column(db.String(200), nullable=True)
+    imagem_url3 = db.Column(db.String(200), nullable=True)
 
 # ==========================================
 # DECORATORS PARA PROTEGER PÁGINAS
@@ -131,7 +136,9 @@ def adicionar_carrinho(id):
 
     session['carrinho'] = carrinho
     flash('Peça adicionada ao seu carrinho!', 'success')
-    return redirect(url_for('exibir_carrinho'))
+
+    # MODIFICADO AQUI: Agora retorna para onde o usuário estava em vez de ir direto para o carrinho
+    return redirect(request.referrer or url_for('index'))
 
 @app.route('/carrinho')
 def exibir_carrinho():
@@ -228,18 +235,15 @@ def painel_admin():
     usuarios = Usuario.query.all()
     return render_template("admin.html", produtos=produtos, usuarios=usuarios)
 
-# NOVA ROTA: Adicione logo abaixo da sua rota /admin atual
 @app.route("/admin/usuario/alternar-admin/<int:id>", methods=['POST'])
 @admin_requerido
 def alternar_admin(id):
     usuario = Usuario.query.get_or_404(id)
 
-    # Trava de segurança para você não tirar o seu próprio admin sem querer
     if usuario.id == session.get('usuario_id'):
         flash('Você não pode alterar suas próprias permissões!', 'danger')
         return redirect(url_for('painel_admin'))
 
-    # Inverte o status: se era True (Admin) vira False (Comum), e vice-versa
     usuario.eh_admin = not usuario.eh_admin
     db.session.commit()
 
@@ -258,22 +262,28 @@ def novo_produto():
         categoria = request.form.get('categoria')
         tamanho = request.form.get('tamanho')
 
-        nome_imagem = None
+        nomes_imagens = [None, None, None]
 
-        if 'imagem_arquivo' in request.files:
-            arquivo = request.files['imagem_arquivo']
-            if arquivo and arquivo.filename != '' and arquivo_permitido(arquivo.filename):
-                nome_imagem = secure_filename(arquivo.filename)
-                arquivo.save(os.path.join(app.config['UPLOAD_FOLDER'], nome_imagem))
+        for i in range(1, 4):
+            campo_nome = f'imagem_arquivo{i}' if i > 1 else 'imagem_arquivo'
+            if campo_nome in request.files:
+                arquivo = request.files[campo_nome]
+                if arquivo and arquivo.filename != '' and arquivo_permitido(arquivo.filename):
+                    nome_seguro = secure_filename(arquivo.filename)
+                    nome_final = f"foto{i}_{nome_seguro}"
+                    arquivo.save(os.path.join(app.config['UPLOAD_FOLDER'], nome_final))
+                    nomes_imagens[i-1] = nome_final
 
         produto = Produto(
             nome=nome,
             descricao=descricao,
             preco=preco,
             estoque=estoque,
-            imagem_url=nome_imagem,
             categoria=categoria,
-            tamanho=tamanho
+            tamanho=tamanho,
+            imagem_url=nomes_imagens[0],
+            imagem_url2=nomes_imagens[1],
+            imagem_url3=nomes_imagens[2]
         )
         db.session.add(produto)
         db.session.commit()
@@ -288,10 +298,11 @@ def novo_produto():
 def deletar_produto(id):
     produto = Produto.query.get_or_404(id)
 
-    if produto.imagem_url:
-        caminho_foto = os.path.join(app.config['UPLOAD_FOLDER'], produto.imagem_url)
-        if os.path.exists(caminho_foto):
-            os.remove(caminho_foto)
+    for campo_foto in [produto.imagem_url, produto.imagem_url2, produto.imagem_url3]:
+        if campo_foto:
+            caminho_foto = os.path.join(app.config['UPLOAD_FOLDER'], campo_foto)
+            if os.path.exists(caminho_foto):
+                os.remove(caminho_foto)
 
     db.session.delete(produto)
     db.session.commit()
@@ -302,6 +313,5 @@ with app.app_context():
     db.create_all()
 
 if __name__ == "__main__":
-    # Configuração de porta dinâmica para servidores de hospedagem
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
