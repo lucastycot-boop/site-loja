@@ -35,18 +35,6 @@
             box-shadow: 0 4px 15px rgba(255, 0, 127, 0.3);
         }
 
-        /* Botão Outline Preto */
-        .btn-outline-boutique {
-            border: 2px solid #111111;
-            color: #111111;
-            font-weight: 700;
-            transition: all 0.3s ease;
-        }
-        .btn-outline-boutique:hover {
-            background-color: #111111;
-            color: white;
-        }
-
         /* Pílulas de Filtro Modernas */
         .btn-filtro {
             border-radius: 25px;
@@ -168,6 +156,7 @@
             height: 380px;
             background-color: #ffffff;
             border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
         }
 
         /* Estilo dos Cards de Produto */
@@ -232,7 +221,7 @@
                     <i class="bi bi-bag-heart text-pink"></i>
                     {% if session.get('carrinho') %}
                         <span class="cart-badge">
-                            {{ session['carrinho']|length }}
+                            {{ session['carrinho'].values()|sum }}
                         </span>
                     {% endif %}
                 </a>
@@ -271,7 +260,7 @@
             <div>
                 <p class="text-muted small text-uppercase fw-bold mb-2" style="letter-spacing: 1px;">Categorias</p>
                 <a href="/" class="menu-link {% if not categoria_atual %}text-pink{% endif %}"><i class="bi bi-grid-sub text-pink"></i> Ver Tudo</a>
-                {% for categoria in categorias %}
+                {% for categoria in categories %}
                     <a href="/?categoria={{ categoria }}{% if ordem_atual %}&ordem={{ ordem_atual }}{% endif %}" class="menu-link text-capitalize {% if categoria_atual == categoria %}text-pink{% endif %}">
                         <i class="bi bi-tag-fill text-muted"></i> {{ categoria }}
                     </a>
@@ -296,7 +285,7 @@
                 <a href="/{% if ordem_atual %}?ordem={{ ordem_atual }}{% endif %}" class="btn-filtro {% if not categoria_atual %}active{% endif %}">
                     Ver Tudo
                 </a>
-                {% for categoria in categorias %}
+                {% for categoria in categories %}
                     <a href="/?categoria={{ categoria }}{% if ordem_atual %}&ordem={{ ordem_atual }}{% endif %}" class="btn-filtro {% if categoria_atual == categoria %}active{% endif %}">
                         {{ categoria }}
                     </a>
@@ -340,23 +329,25 @@
                 <div class="product-card h-100 d-flex flex-column justify-content-between">
 
                     <div>
-                        <div class="img-container-responsive">
-                            {% if produto.imagem_url %}
-                                <img src="{{ url_for('static', filename='uploads/' ~ produto.imagem_url) }}" class="card-img-top" alt="{{ produto.nome }}" style="width: 100%; height: 100%; object-fit: cover;">
-                            {% else %}
-                                <div class="d-flex align-items-center justify-content-center text-muted h-100 bg-light">
-                                    <span style="font-size: 0.8rem; font-weight: 500;">Sem foto</span>
-                                </div>
-                            {% endif %}
-                        </div>
+                        <a href="/produto/{{ produto.id }}" style="text-decoration: none; color: inherit;">
+                            <div class="img-container-responsive">
+                                {% if produto.imagem_url %}
+                                    <img src="{{ url_for('static', filename='uploads/' ~ produto.imagem_url) }}" class="card-img-top" alt="{{ produto.nome }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                {% else %}
+                                    <div class="d-flex align-items-center justify-content-center text-muted h-100 bg-light">
+                                        <span style="font-size: 0.8rem; font-weight: 500;">Sem foto</span>
+                                    </div>
+                                {% endif %}
+                            </div>
 
-                        <div class="p-2 p-md-3">
-                            <span class="text-uppercase text-pink fw-bold d-block mb-1" style="font-size: 0.65rem; letter-spacing: 0.8px;">
-                                {{ produto.categoria }} {% if produto.tamanho and produto.tamanho.strip() %}- {{ produto.tamanho }}{% endif %}
-                            </span>
-                            <h6 class="fw-bold text-dark mb-1 text-truncate card-title-responsive" style="letter-spacing: -0.3px;">{{ produto.nome }}</h6>
-                            <p class="text-muted small mb-0 text-truncate" style="font-size: 0.8rem;">{{ produto.descricao }}</p>
-                        </div>
+                            <div class="p-2 p-md-3">
+                                <span class="text-uppercase text-pink fw-bold d-block mb-1" style="font-size: 0.65rem; letter-spacing: 0.8px;">
+                                    {{ produto.categoria }} {% if produto.tamanho and produto.tamanho.strip() %}- {{ produto.tamanho }}{% endif %}
+                                </span>
+                                <h6 class="fw-bold text-dark mb-1 text-truncate card-title-responsive" style="letter-spacing: -0.3px;">{{ produto.nome }}</h6>
+                                <p class="text-muted small mb-0 text-truncate" style="font-size: 0.8rem;">{{ produto.descricao }}</p>
+                            </div>
+                        </a>
                     </div>
 
                     <div class="p-2 p-md-3 pt-0">
@@ -369,10 +360,6 @@
                                 <i class="bi bi-cart-plus-fill"></i> Levar Peça
                             </button>
                         </form>
-
-                        <a href="/produto/{{ produto.id }}" class="btn btn-outline-boutique w-100 py-1.5 text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px; border-radius: 6px;">
-                            Ver Detalhes
-                        </a>
                     </div>
 
                 </div>
