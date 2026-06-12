@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - Espaço Vanessa Cubula</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .navbar-admin { background-color: #111111; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-dark navbar-admin shadow-sm mb-4">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/admin"><i class="bi bi-speedometer2"></i> Painel Administrativo</a>
+            <a href="/" class="btn btn-outline-light btn-sm">Ver Loja</a>
+        </div>
+    </nav>
+
+    <div class="container mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold m-0">Gerenciar Cabide Virtual</h2>
+            <a href="/admin/produto/novo" class="btn btn-dark"><i class="bi bi-plus-lg"></i> Adicionar Peça</a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} shadow-sm">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="card border-0 shadow-sm mb-5">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle m-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-3">Foto</th>
+                                <th>Nome</th>
+                                <th>Categoria</th>
+                                <th>Tamanho</th>
+                                <th>Preço</th>
+                                <th>Estoque</th>
+                                <th class="text-end table-layout-fixed pe-3">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for produto in produtos %}
+                            <tr>
+                                <td class="ps-3">
+                                    <div style="width: 50px; height: 50px; background-color: #eaeaea; border-radius: 6px; overflow: hidden;">
+                                        {% if produto.imagem_url %}
+                                            <img src="/static/uploads/{{ produto.imagem_url }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                        {% else %}
+                                            <div class="d-flex h-100 align-items-center justify-content-center text-muted"><i class="bi bi-image" style="font-size: 0.8rem;"></i></div>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td><strong>{{ produto.nome }}</strong></td>
+                                <td><span class="badge bg-light text-dark border text-capitalize">{{ produto.categoria }}</span></td>
+                                <td><span class="badge bg-secondary">{{ produto.tamanho if produto.tamanho else 'Único' }}</span></td>
+                                <td>R$ {{ "%.2f"|format(produto.preco) }}</td>
+                                <td>{{ produto.estoque }} un.</td>
+                                <td class="text-end pe-3">
+                                    <form action="/admin/produto/deletar/{{ produto.id }}" method="POST" class="d-inline" onsubmit="return confirm('Tem certeza que deseja remover esta peça?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center py-4 text-muted">Nenhum look cadastrado ainda.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="fw-bold mb-3 text-secondary">Utilizadores Registados</h4>
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for usuario in usuarios %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                        <div>
+                            <strong>{{ usuario.nome }}</strong> <span class="text-muted small">({{ usuario.email }})</span>
+                        </div>
+                        {% if usuario.eh_admin %}
+                            <span class="badge bg-dark">Administrador</span>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

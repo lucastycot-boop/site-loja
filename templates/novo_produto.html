@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Produto - Espaço Vanessa Cubula</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
+        .card-form { border-radius: 12px; }
+    </style>
+</head>
+<body>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+
+                <div class="mb-3">
+                    <a href="/admin" class="text-dark text-decoration-none small fw-bold"><i class="bi bi-arrow-left"></i> Voltar ao Painel</a>
+                </div>
+
+                <div class="card border-0 shadow-sm card-form">
+                    <div class="card-body p-4">
+                        <h4 class="fw-bold mb-4 text-dark"><i class="bi bi-tag-fill text-muted"></i> Cadastrar Novo Produto</h4>
+
+                        <form action="/admin/produto/novo" method="POST" enctype="multipart/form-data">
+
+                            <div class="mb-3">
+                                <label for="nome" class="form-label fw-bold small text-secondary">Nome do Produto</label>
+                                <input type="text" class="form-control" id="nome" name="nome" placeholder="Ex: Vestido Midi ou Perfume Importado" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="descricao" class="form-label fw-bold small text-secondary">Descrição / Detalhes</label>
+                                <textarea class="form-control" id="descricao" name="descricao" rows="3" placeholder="Tecido, notas do perfume, detalhes..."></textarea>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6 mb-3">
+                                    <label for="categoria" class="form-label fw-bold small text-secondary">Categoria</label>
+                                    <input type="text" class="form-control" id="categoria" name="categoria" placeholder="Ex: Vestidos, Perfumes" required>
+                                </div>
+
+                                <div class="col-6 mb-3">
+                                    <label for="tamanho" class="form-label fw-bold small text-secondary">Tamanho / Vol. / Medida</label>
+                                    <input type="text" class="form-control" id="tamanho" name="tamanho" placeholder="Ex: M, 42, 100ml (Opcional)">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6 mb-3">
+                                    <label for="preco" class="form-label fw-bold small text-secondary">Preço de Venda (R$)</label>
+                                    <input type="number" step="0.01" class="form-control" id="preco" name="preco" placeholder="0.00" required>
+                                </div>
+
+                                <div class="col-6 mb-3">
+                                    <label for="estoque" class="form-label fw-bold small text-secondary">Estoque</label>
+                                    <input type="number" class="form-control" id="estoque" name="estoque" placeholder="0" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="imagem_arquivo" class="form-label fw-bold small text-secondary">Foto do Produto</label>
+                                <input type="file" class="form-control" id="imagem_arquivo" name="imagem_arquivo">
+                            </div>
+
+                            <button type="submit" class="btn btn-dark w-100 py-2.5 fw-bold text-uppercase" style="font-size: 0.85rem; letter-spacing: 0.5px;">Salvar Produto</button>
+
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
