@@ -9,6 +9,7 @@
     <style>
         body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
         .card-form { border-radius: 12px; }
+        .form-label-pink { color: #ff007f; }
     </style>
 </head>
 <body>
@@ -61,9 +62,22 @@
                                 </div>
                             </div>
 
+                            <hr class="text-muted my-4">
+                            <h6 class="fw-bold text-dark mb-3"><i class="bi bi-images text-muted"></i> Fotos do Look (Até 3 fotos)</h6>
+
+                            <div class="mb-3">
+                                <label for="imagem_arquivo" class="form-label fw-bold small text-secondary">Foto Principal (Capa da Vitrine)</label>
+                                <input type="file" class="form-control" id="imagem_arquivo" name="imagem_arquivo" accept="image/*">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="imagem_arquivo2" class="form-label fw-bold small text-secondary">Foto 2 (Detalhes / Costas)</label>
+                                <input type="file" class="form-control" id="imagem_arquivo2" name="imagem_arquivo2" accept="image/*">
+                            </div>
+
                             <div class="mb-4">
-                                <label for="imagem_arquivo" class="form-label fw-bold small text-secondary">Foto do Produto</label>
-                                <input type="file" class="form-control" id="imagem_arquivo" name="imagem_arquivo">
+                                <label for="imagem_arquivo3" class="form-label fw-bold small text-secondary">Foto 3 (Outro Ângulo / Estampa)</label>
+                                <input type="file" class="form-control" id="imagem_arquivo3" name="imagem_arquivo3" accept="image/*">
                             </div>
 
                             <button type="submit" class="btn btn-dark w-100 py-2.5 fw-bold text-uppercase" style="font-size: 0.85rem; letter-spacing: 0.5px;">Salvar Produto</button>
