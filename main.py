@@ -13,8 +13,13 @@ UPLOAD_FOLDER = os.path.join('static', 'uploads')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# CONFIGURAÇÃO DO POSTGRESQL
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:0408@localhost:5432/loja_db'
+# CONFIGURAÇÃO INTELIGENTE DO POSTGRESQL (LOCAL OU PRODUÇÃO)
+# Se a Render fornecer a URL do banco (DATABASE_URL), ele usa. Se não, usa o seu localhost.
+database_url = os.environ.get('DATABASE_URL')
+if database_url and database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'postgresql://postgres:0408@localhost:5432/loja_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -43,7 +48,7 @@ class Produto(db.Model):
     estoque = db.Column(db.Integer, default=0)
     categoria = db.Column(db.String(50), nullable=True)
     imagem_url = db.Column(db.String(200), nullable=True)
-    tamanho = db.Column(db.String(10), nullable=True) # Coluna mapeada com sucesso
+    tamanho = db.Column(db.String(10), nullable=True)
 
 # ==========================================
 # DECORATORS PARA PROTEGER PÁGINAS
@@ -62,7 +67,7 @@ def admin_requerido(f):
     def decorated_function(*args, **kwargs):
         if 'usuario_id' not in session or not session.get('eh_admin'):
             flash('Acesso negado. Apenas administradores podem entrar aqui.', 'danger')
-            return redirect(url_for('index')) # CORRIGIDO: mudado de 'home' para 'index'
+            return redirect(url_for('index'))
         return f(*args, **kwargs)
     return decorated_function
 
@@ -100,33 +105,31 @@ def index():
     categorias_no_banco = Produto.query.with_entities(Produto.categoria).distinct().all()
     categorias = [cat[0] for cat in categorias_no_banco if cat[0]]
 
-    return render_template('index.html', produtos=produtos, categorias=categorias, busca=busca, categoria_atual=categoria_filtrada, ordem_atual=ordenar_por)
+    return render_template('index.html', produtos=produtos, categories=categorias, busca=busca, categoria_atual=categoria_filtrada, ordem_atual=ordenar_por)
 
 @app.route("/produto/<int:id>")
 def detalhe_produto(id):
     produto = Produto.query.get_or_404(id)
     return render_template("produto.html", produto=produto)
 
-    # ==========================================
+# ==========================================
 # ROTAS DO CARRINHO DE COMPRAS
 # ==========================================
 
 @app.route('/carrinho/adicionar/<int:id>', methods=['POST'])
 def adicionar_carrinho(id):
-    # Se não existir um carrinho na sessão, criamos um dicionário vazio
     if 'carrinho' not in session:
         session['carrinho'] = {}
 
     carrinho = session['carrinho']
-    id_str = str(id) # A sessão do Flask transforma chaves numéricas em texto
+    id_str = str(id)
 
-    # Se o produto já estiver no carrinho, aumenta a quantidade, senão começa com 1
     if id_str in carrinho:
         carrinho[id_str] += 1
     else:
         carrinho[id_str] = 1
 
-    session['carrinho'] = carrinho # Diz ao Flask que a sessão foi modificada
+    session['carrinho'] = carrinho
     flash('Peça adicionada ao seu carrinho!', 'success')
     return redirect(url_for('exibir_carrinho'))
 
@@ -136,7 +139,6 @@ def exibir_carrinho():
     produtos_carrinho = []
     total = 0.0
 
-    # Busca os detalhes de cada produto que está guardado no carrinho da sessão
     for id_str, quantidade in carrinho.items():
         produto = Produto.query.get(int(id_str))
         if produto:
@@ -235,7 +237,7 @@ def novo_produto():
         preco = float(request.form.get('preco'))
         estoque = int(request.form.get('estoque'))
         categoria = request.form.get('categoria')
-        tamanho = request.form.get('tamanho') # CAPTURANDO O TAMANHO DO FORMULÁRIO
+        tamanho = request.form.get('tamanho')
 
         nome_imagem = None
 
@@ -245,7 +247,6 @@ def novo_produto():
                 nome_imagem = secure_filename(arquivo.filename)
                 arquivo.save(os.path.join(app.config['UPLOAD_FOLDER'], nome_imagem))
 
-        # SALVANDO O TAMANHO NO BANCO DE DADOS
         produto = Produto(
             nome=nome,
             descricao=descricao,
@@ -282,4 +283,6 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
 
-    app.run(debug=True)
+    # Configuração de porta dinâmica para servidores de hospedagem
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
