@@ -182,7 +182,7 @@ def cadastro():
 
         senha_cripto = generate_password_hash(senha, method='scrypt')
 
-        novo_usuario = Usuario(nome=nome, email=email, senha=senha_cripto, eh_admin=True)
+        novo_usuario = Usuario(nome=nome, email=email, senha=senha_cripto, eh_admin=False)
         db.session.add(novo_usuario)
         db.session.commit()
 
@@ -227,6 +227,25 @@ def painel_admin():
     produtos = Produto.query.all()
     usuarios = Usuario.query.all()
     return render_template("admin.html", produtos=produtos, usuarios=usuarios)
+
+# NOVA ROTA: Adicione logo abaixo da sua rota /admin atual
+@app.route("/admin/usuario/alternar-admin/<int:id>", methods=['POST'])
+@admin_requerido
+def alternar_admin(id):
+    usuario = Usuario.query.get_or_404(id)
+
+    # Trava de segurança para você não tirar o seu próprio admin sem querer
+    if usuario.id == session.get('usuario_id'):
+        flash('Você não pode alterar suas próprias permissões!', 'danger')
+        return redirect(url_for('painel_admin'))
+
+    # Inverte o status: se era True (Admin) vira False (Comum), e vice-versa
+    usuario.eh_admin = not usuario.eh_admin
+    db.session.commit()
+
+    status = "promovido a Administrador" if usuario.eh_admin else "rebaixado para Usuário Comum"
+    flash(f'Usuário {usuario.nome} foi {status}!', 'success')
+    return redirect(url_for('painel_admin'))
 
 @app.route("/admin/produto/novo", methods=['GET', 'POST'])
 @admin_requerido
