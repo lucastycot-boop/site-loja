@@ -173,6 +173,31 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.08);
         }
 
+        /* BOTÕES DE REDES SOCIAIS EM BOLINHA */
+        .social-ball {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.3rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+        .social-ball:hover {
+            color: white;
+            transform: translateY(-3px);
+        }
+        .btn-instagram {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+        }
+        .btn-whatsapp {
+            background-color: #25d366;
+        }
+
         @media (min-width: 992px) {
             .search-box { max-width: 330px; }
             .hero-banner { margin-top: 40px; padding: 60px 20px; }
@@ -235,6 +260,7 @@
                     <a href="/login" class="btn btn-sm text-white me-1 small fw-bold">Login</a>
                     <a href="/cadastro" class="btn btn-sm btn-pink px-3 small">Cadastrar</a>
                 {% endif %}
+
             </div>
         </div>
     </nav>
@@ -253,6 +279,12 @@
                 {% endif %}
 
                 <a href="/carrinho" class="menu-link"><i class="bi bi-bag-check text-pink"></i> Ver Meu Carrinho</a>
+
+                {% if session.get('usuario_id') %}
+                    <a href="/minhas-compras" class="menu-link">
+                        <i class="bi bi-clock-history text-pink"></i> Minhas Compras
+                    </a>
+                {% endif %}
             </div>
 
             <hr class="border-secondary my-4">
@@ -274,7 +306,7 @@
             <span class="text-pink text-uppercase fw-bold small d-block mb-2" style="letter-spacing: 3px; font-size: 0.85rem;">Exclusividade & Estilo</span>
             <h1 class="display-5 fw-bold text-dark mb-2">Sua melhor versão está aqui</h1>
             <p class="text-muted mx-auto mb-0 px-2" style="max-width: 600px; font-size: 0.95rem;">
-                Looks marcantes e fragrâncias inesquecíveis selecionados especialmente para você.
+                Looks marcantes selecionados especialmente para você.
             </p>
         </div>
     </div>
@@ -374,8 +406,18 @@
     </div>
 
     <footer class="bg-boutique-black text-white py-4 mt-5 small border-top border-2 border-pink">
-        <div class="container text-center text-white-50">
-            &copy; 2026 <strong class="text-white">Espaço Vanessa Cubula</strong>. Todos os direitos reservados.
+        <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 text-center text-md-start text-white-50">
+            <div>
+                &copy; 2026 <strong class="text-white">Espaço Vanessa Cubula</strong>. Todos os direitos reservados.
+            </div>
+            <div class="d-flex gap-2">
+                <a href="https://www.instagram.com/espaco_vanessa_cubula?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" class="social-ball btn-instagram" title="Siga nosso Instagram">
+                    <i class="bi bi-instagram"></i>
+                </a>
+                <a href="https://wa.me/5521979049159" target="_blank" class="social-ball btn-whatsapp" title="Fale Conosco no WhatsApp">
+                    <i class="bi bi-whatsapp"></i>
+                </a>
+            </div>
         </div>
     </footer>
 
