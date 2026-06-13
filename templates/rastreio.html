@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acompanhar Pedido - Espaço Vanessa Cubula</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body { font-family: 'Montserrat', sans-serif; background-color: #f9f9f9; }
+        .bg-boutique-black { background-color: #111111; }
+        .text-pink { color: #ff007f; }
+        .card-custom { border-radius: 16px; border: none; box-shadow: 0 4px 25px rgba(0,0,0,0.05); }
+        .timeline { position: relative; padding-left: 30px; list-style: none; }
+        .timeline::before { content: ""; position: absolute; left: 13px; top: 0; bottom: 0; width: 3px; background: #e9ecef; }
+        .timeline-item { position: relative; margin-bottom: 30px; }
+        .timeline-icon { position: absolute; left: -30px; width: 28px; height: 28px; background: white; border: 3px solid #ff007f; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+        .timeline-item.done .timeline-icon { background: #ff007f; color: white; }
+        .timeline-item.waiting .timeline-icon { border-color: #ced4da; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-dark bg-boutique-black py-3 mb-5">
+        <div class="container justify-content-between align-items-center">
+            <a href="/" class="navbar-brand fw-bold text-uppercase m-0" style="letter-spacing: 2px;">
+                Espaço <span class="text-pink">Vanessa Cubula</span>
+            </a>
+            <a href="/minhas-compras" class="btn btn-outline-light btn-sm fw-bold">Minhas Compras</a>
+        </div>
+    </nav>
+
+    <div class="container mb-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8">
+
+                <div class="card card-custom p-4 bg-white text-center mb-4">
+                    <i class="bi bi-bag-check-fill text-success display-4 mb-2"></i>
+                    <h3 class="fw-bold">Acompanhar Compra</h3>
+                    <p class="text-muted">Itens: <span class="text-dark fw-medium">{{ pedido.produtos_resumo }}</span></p>
+                    <div class="bg-light p-3 rounded-3 border fw-bold text-uppercase fs-5 mb-2 text-dark" style="letter-spacing: 1px;">
+                        <i class="bi bi-box-seam text-pink"></i> {{ pedido.codigo_rastreio }}
+                    </div>
+                    <span class="badge bg-dark p-2 text-uppercase fs-6">Status Atual: {{ pedido.status }}</span>
+                </div>
+
+                <div class="card card-custom p-4 bg-white">
+                    <h5 class="fw-bold mb-4"><i class="bi bi-truck text-pink"></i> Histórico de Envio</h5>
+
+                    <ul class="timeline">
+                        <li class="timeline-item done">
+                            <span class="timeline-icon"><i class="bi bi-check"></i></span>
+                            <h6 class="fw-bold mb-0">Pedido Recebido</h6>
+                            <small class="text-muted">A nossa equipe recebeu as informações do seu pedido.</small>
+                        </li>
+
+                        <li class="timeline-item {% if pedido.status in ['Pagamento Confirmado', 'Preparando Envio', 'Despachado / Em Trânsito', 'Entregue'] %}done{% else %}waiting{% endif %}">
+                            <span class="timeline-icon"><i class="bi bi-check"></i></span>
+                            <h6 class="fw-bold mb-0">Pagamento Confirmado</h6>
+                            <small class="text-muted">A transação financeira da compra foi validada.</small>
+                        </li>
+
+                        <li class="timeline-item {% if pedido.status in ['Preparando Envio', 'Despachado / Em Trânsito', 'Entregue'] %}done{% else %}waiting{% endif %}">
+                            <span class="timeline-icon"><i class="bi bi-check"></i></span>
+                            <h6 class="fw-bold mb-0">Preparando Envio</h6>
+                            <small class="text-muted">Estamos perfumando e embalando as suas peças com todo o carinho.</small>
+                        </li>
+
+                        <li class="timeline-item {% if pedido.status in ['Despachado / Em Trânsito', 'Entregue'] %}done{% else %}waiting{% endif %}">
+                            <span class="timeline-icon"><i class="bi bi-check"></i></span>
+                            <h6 class="fw-bold mb-0">Despachado / Em Trânsito</h6>
+                            <small class="text-muted">O pacote saiu do nosso centro de distribuição rumo ao seu endereço.</small>
+                        </li>
+                    </ul>
+
+                    <a href="/" class="btn btn-dark w-100 py-2.5 fw-bold text-uppercase mt-2">Ir para a Vitrine</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
