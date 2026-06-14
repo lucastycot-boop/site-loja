@@ -20,17 +20,22 @@
 </head>
 <body>
 
-    <nav class="navbar navbar-dark bg-boutique-black py-3 shadow-sm">
-        <div class="container">
-            <a class="navbar-brand fw-bold text-uppercase" href="/" style="letter-spacing: 2px;">
+    <<nav class="navbar navbar-dark bg-boutique-black py-3 shadow-sm">
+    <div class="container">
+        <div class="d-flex align-items-center gap-3">
+            <a class="navbar-brand fw-bold text-uppercase m-0" href="/" style="letter-spacing: 2px;">
                 Espaço <span class="text-pink">Vanessa Cubula</span> <small class="fs-6 text-muted">| Admin</small>
             </a>
-            <div class="d-flex align-items-center gap-3">
-                <span class="text-white-50 small d-none d-md-inline">Olá, {{ session.get('usuario_nome') }}</span>
-                <a href="/logout" class="btn btn-sm btn-outline-light fw-bold">Sair</a>
-            </div>
+            <a href="/" class="btn btn-sm btn-outline-secondary text-white border-secondary fw-bold px-3">
+                <i class="bi bi-eye"></i> Ver Loja
+            </a>
         </div>
-    </nav>
+        <div class="d-flex align-items-center gap-3">
+            <span class="text-white-50 small d-none d-md-inline">Olá, {{ session.get('usuario_nome') }}</span>
+            <a href="/logout" class="btn btn-sm btn-outline-light fw-bold">Sair</a>
+        </div>
+    </div>
+</nav>
 
     <div class="container py-5">
 
