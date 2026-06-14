@@ -10,6 +10,8 @@ from sqlalchemy import func
 
 app = Flask(__name__)
 app.secret_key = "chave_secreta_super_segura_para_loja"
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
 # CONFIGURAÇÃO DE UPLOAD DE IMAGENS
 UPLOAD_FOLDER = os.path.join('static', 'uploads')
@@ -92,6 +94,10 @@ def admin_requerido(f):
 # ==========================================
 # ROTAS PÚBLICAS (VITRINE E PRODUTOS)
 # ==========================================
+
+@app.route('/quem-somos')
+def quem_somos():
+    return render_template('quem_somos.html')
 
 @app.route('/')
 def index():
