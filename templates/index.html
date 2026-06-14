@@ -9,10 +9,22 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
     <style>
+        /* AJUSTE PARA O RODAPÉ COBRIR ATÉ O FINAL DA TELA */
+        html, body {
+            height: 100%;
+        }
         body {
             font-family: 'Montserrat', sans-serif;
             background-color: #f9f9f9;
             color: #111111;
+            display: flex;
+            flex-direction: column;
+        }
+        .content-wrapper {
+            flex: 1 0 auto;
+        }
+        footer {
+            flex-shrink: 0;
         }
 
         /* PALETA DE CORES: PRETO, BRANCO E ROSA PINK */
@@ -213,199 +225,204 @@
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-boutique-black py-2 sticky-top shadow-sm">
-        <div class="container d-flex flex-wrap justify-content-between align-items-center">
+    <div class="content-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-boutique-black py-2 sticky-top shadow-sm">
+            <div class="container d-flex flex-wrap justify-content-between align-items-center">
 
-            <div class="d-flex align-items-center gap-2">
-                <button class="btn text-white fs-3 p-0 me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuLateral">
-                    <i class="bi bi-list text-pink"></i>
-                </button>
-
-                <a class="navbar-brand d-flex align-items-center gap-2 m-0" href="/">
-                    <img src="{{ url_for('static', filename='logo.webp') }}" alt="Logo" style="height: 65px; width: auto; object-fit: contain;">
-                    <span class="fw-bold text-uppercase tracking-wide fs-5 d-none d-lg-inline" style="letter-spacing: 2px;">
-                        Espaço <span class="text-pink">Vanessa Cubula</span>
-                    </span>
-                </a>
-            </div>
-
-            <div class="order-3 order-lg-2 mobile-search-row">
-                <form class="search-box" action="/" method="GET">
-                    <input class="form-control search-input" type="text" name="q" placeholder="O que você procura hoje?..." value="{{ busca }}">
-                    {% if categoria_atual %}<input type="hidden" name="categoria" value="{{ categoria_atual }}">{% endif %}
-                    {% if ordem_atual %}<input type="hidden" name="ordem" value="{{ ordem_atual }}">{% endif %}
-                    <button class="search-btn" type="submit">
-                        <i class="bi bi-search text-pink"></i>
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn text-white fs-3 p-0 me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuLateral">
+                        <i class="bi bi-list text-pink"></i>
                     </button>
-                </form>
-            </div>
 
-            <div class="order-2 order-lg-3 d-flex align-items-center gap-3">
-
-                <a href="/carrinho" class="text-white position-relative fs-4 me-2" title="Meu Carrinho">
-                    <i class="bi bi-bag-heart text-pink"></i>
-                    {% if session.get('carrinho') %}
-                        <span class="cart-badge">
-                            {{ session['carrinho'].values()|sum }}
+                    <a class="navbar-brand d-flex align-items-center gap-2 m-0" href="/">
+                        <img src="{{ url_for('static', filename='logo.webp') }}" alt="Logo" style="height: 65px; width: auto; object-fit: contain;">
+                        <span class="fw-bold text-uppercase tracking-wide fs-5 d-none d-lg-inline" style="letter-spacing: 2px;">
+                            Espaço <span class="text-pink">Vanessa Cubula</span>
                         </span>
+                    </a>
+                </div>
+
+                <div class="order-3 order-lg-2 mobile-search-row">
+                    <form class="search-box" action="/" method="GET">
+                        <input class="form-control search-input" type="text" name="q" placeholder="O que você procura hoje?..." value="{{ busca }}">
+                        {% if categoria_atual %}<input type="hidden" name="categoria" value="{{ categoria_atual }}">{% endif %}
+                        {% if ordem_atual %}<input type="hidden" name="ordem" value="{{ ordem_atual }}">{% endif %}
+                        <button class="search-btn" type="submit">
+                            <i class="bi bi-search text-pink"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <div class="order-2 order-lg-3 d-flex align-items-center gap-3">
+
+                    <a href="/carrinho" class="text-white position-relative fs-4 me-2" title="Meu Carrinho">
+                        <i class="bi bi-bag-heart text-pink"></i>
+                        {% if session.get('carrinho') %}
+                            <span class="cart-badge">
+                                {{ session['carrinho'].values()|sum }}
+                            </span>
+                        {% endif %}
+                    </a>
+
+                    {% if session.get('usuario_nome') %}
+                        {% if session.get('eh_admin') %}
+                            <a href="/admin" class="btn btn-sm btn-outline-light px-2 d-none d-md-inline-block">Painel</a>
+                        {% endif %}
+                        <a href="/logout" class="btn btn-sm btn-pink px-3">Sair</a>
+                    {% else %}
+                        <a href="/login" class="btn btn-sm text-white me-1 small fw-bold">Login</a>
+                        <a href="/cadastro" class="btn btn-sm btn-pink px-3 small">Cadastrar</a>
                     {% endif %}
-                </a>
-
-                {% if session.get('usuario_nome') %}
-                    {% if session.get('eh_admin') %}
-                        <a href="/admin" class="btn btn-sm btn-outline-light px-2 d-none d-md-inline-block">Painel</a>
-                    {% endif %}
-                    <a href="/logout" class="btn btn-sm btn-pink px-3">Sair</a>
-                {% else %}
-                    <a href="/login" class="btn btn-sm text-white me-1 small fw-bold">Login</a>
-                    <a href="/cadastro" class="btn btn-sm btn-pink px-3 small">Cadastrar</a>
-                {% endif %}
-
-            </div>
-        </div>
-    </nav>
-
-    <div class="offcanvas offcanvas-start offcanvas-boutique" tabindex="-1" id="menuLateral">
-        <div class="offcanvas-header border-bottom border-secondary py-4">
-            <h5 class="offcanvas-title fw-bold text-uppercase text-pink" style="letter-spacing: 1px;">Menu Espaço VC</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body p-4">
-            <div class="mb-4">
-                <p class="text-muted small text-uppercase fw-bold mb-2" style="letter-spacing: 1px;">Minha Área</p>
-
-                {% if session.get('eh_admin') %}
-                    <a href="/admin" class="menu-link text-pink fw-bold"><i class="bi bi-speedometer2"></i> Painel Admin</a>
-                {% endif %}
-
-                <a href="/carrinho" class="menu-link"><i class="bi bi-bag-check text-pink"></i> Ver Meu Carrinho</a>
-
-                {% if session.get('usuario_id') %}
-                    <a href="/minhas-compras" class="menu-link">
-                        <i class="bi bi-clock-history text-pink"></i> Minhas Compras
-                    </a>
-                {% endif %}
-            </div>
-
-            <hr class="border-secondary my-4">
-
-            <div>
-                <p class="text-muted small text-uppercase fw-bold mb-2" style="letter-spacing: 1px;">Categorias</p>
-                <a href="/" class="menu-link {% if not categoria_atual %}text-pink{% endif %}"><i class="bi bi-grid-sub text-pink"></i> Ver Tudo</a>
-                {% for categoria in categories %}
-                    <a href="/?categoria={{ categoria }}{% if ordem_atual %}&ordem={{ ordem_atual }}{% endif %}" class="menu-link text-capitalize {% if categoria_atual == categoria %}text-pink{% endif %}">
-                        <i class="bi bi-tag-fill text-muted"></i> {{ categoria }}
-                    </a>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-
-    <div class="container mt-4">
-        <div class="hero-banner text-center">
-            <span class="text-pink text-uppercase fw-bold small d-block mb-2" style="letter-spacing: 3px; font-size: 0.85rem;">Exclusividade & Estilo</span>
-            <h1 class="display-5 fw-bold text-dark mb-2">Sua melhor versão está aqui</h1>
-            <p class="text-muted mx-auto mb-0 px-2" style="max-width: 600px; font-size: 0.95rem;">
-                Looks marcantes selecionados especialmente para você.
-            </p>
-        </div>
-    </div>
-
-    <div class="container mb-4">
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
-            <div class="d-flex flex-wrap gap-2 justify-content-center">
-                <a href="/{% if ordem_atual %}?ordem={{ ordem_atual }}{% endif %}" class="btn-filtro {% if not categoria_atual %}active{% endif %}">
-                    Ver Tudo
-                </a>
-                {% for categoria in categories %}
-                    <a href="/?categoria={{ categoria }}{% if ordem_atual %}&ordem={{ ordem_atual }}{% endif %}" class="btn-filtro {% if categoria_atual == categoria %}active{% endif %}">
-                        {{ categoria }}
-                    </a>
-                {% endfor %}
-            </div>
-
-            <div class="w-100 text-center text-md-end" style="max-width: 220px;">
-                <select class="form-select select-ordem w-100" onchange="location = this.value;">
-                    <option value="/?{% if categoria_atual %}categoria={{ categoria_atual }}&{% endif %}{% if busca %}q={{ busca }}&{% endif %}ordem=" {% if not ordem_atual %}selected{% endif %}>Organizar por</option>
-                    <option value="/?{% if categoria_atual %}categoria={{ categoria_atual }}&{% endif %}{% if busca %}q={{ busca }}&{% endif %}ordem=preco_min" {% if ordem_atual == 'preco_min' %}selected{% endif %}>Menor Preço</option>
-                    <option value="/?{% if categoria_atual %}categoria={{ categoria_atual }}&{% endif %}{% if busca %}q={{ busca }}&{% endif %}ordem=preco_max" {% if ordem_atual == 'preco_max' %}selected{% endif %}>Maior Preço</option>
-                    <option value="/?{% if categoria_atual %}categoria={{ categoria_atual }}&{% endif %}{% if busca %}q={{ busca }}&{% endif %}ordem=novidades" {% if ordem_atual == 'novidades' %}selected{% endif %}>Novidades</option>
-                </select>
-            </div>
-        </div>
-    </div>
-
-    <div class="container mb-5">
-
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-dark border-0 shadow-sm small text-white bg-boutique-black mx-1">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        {% if busca or categoria_atual or ordem_atual %}
-            <div class="mb-3 d-flex justify-content-between align-items-center small px-1">
-                <p class="text-muted m-0" style="font-size: 0.85rem;">
-                    Filtrado por: {% if categoria_atual %} <span class="badge bg-pink text-capitalize">{{ categoria_atual }}</span> {% endif %}
-                    {% if busca %} <strong>"{{ busca }}"</strong> {% endif %}
-                </p>
-                <a href="/" class="btn btn-sm btn-outline-dark py-1 px-3" style="font-size: 0.75rem; border-radius: 20px;">Limpar Filtros</a>
-            </div>
-        {% endif %}
-
-        <div class="row g-3 g-md-4 px-1">
-            {% for produto in produtos %}
-            <div class="col-6 col-md-6 col-lg-4 mb-2">
-                <div class="product-card h-100 d-flex flex-column justify-content-between">
-
-                    <div>
-                        <a href="/produto/{{ produto.id }}" style="text-decoration: none; color: inherit;">
-                            <div class="img-container-responsive">
-                                {% if produto.imagem_url %}
-                                    <img src="{{ url_for('static', filename='uploads/' ~ produto.imagem_url) }}" class="card-img-top" alt="{{ produto.nome }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                {% else %}
-                                    <div class="d-flex align-items-center justify-content-center text-muted h-100 bg-light">
-                                        <span style="font-size: 0.8rem; font-weight: 500;">Sem foto</span>
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="p-2 p-md-3">
-                                <span class="text-uppercase text-pink fw-bold d-block mb-1" style="font-size: 0.65rem; letter-spacing: 0.8px;">
-                                    {{ produto.categoria }} {% if produto.tamanho and produto.tamanho.strip() %}- {{ produto.tamanho }}{% endif %}
-                                </span>
-                                <h6 class="fw-bold text-dark mb-1 text-truncate card-title-responsive" style="letter-spacing: -0.3px;">{{ produto.nome }}</h6>
-                                <p class="text-muted small mb-0 text-truncate" style="font-size: 0.8rem;">{{ produto.descricao }}</p>
-                            </div>
-                        </a>
-                    </div>
-
-                    <div class="p-2 p-md-3 pt-0">
-                        <div class="mb-2">
-                            <span class="fw-bold text-dark price-responsive" style="font-size: 1.15rem;">R$ {{ "%.2f"|format(produto.preco) }}</span>
-                        </div>
-
-                        <form action="/carrinho/adicionar/{{ produto.id }}" method="POST">
-                            <button type="submit" class="btn btn-pink w-100 py-2 text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.5px; border-radius: 6px;">
-                                <i class="bi bi-cart-plus-fill"></i> Levar Peça
-                            </button>
-                        </form>
-                    </div>
 
                 </div>
             </div>
-            {% else %}
-            <div class="col-12 text-center py-5">
-                <i class="bi bi-box-seam display-4 text-muted d-block mb-3"></i>
-                <p class="text-muted">Nenhum produto cadastrado nesta seção.</p>
+        </nav>
+
+        <div class="offcanvas offcanvas-start offcanvas-boutique" tabindex="-1" id="menuLateral">
+            <div class="offcanvas-header border-bottom border-secondary py-4">
+                <h5 class="offcanvas-title fw-bold text-uppercase text-pink" style="letter-spacing: 1px;">Menu Espaço VC</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
-            {% endfor %}
+            <div class="offcanvas-body p-4">
+                <div class="mb-4">
+                    <p class="text-muted small text-uppercase fw-bold mb-2" style="letter-spacing: 1px;">Minha Área</p>
+
+                    <a href="/" class="menu-link"><i class="bi bi-house text-pink"></i> Início</a>
+                    <a href="/quem-somos" class="menu-link"><i class="bi bi-info-circle text-pink"></i> Quem Somos</a>
+
+                    {% if session.get('eh_admin') %}
+                        <a href="/admin" class="menu-link text-pink fw-bold"><i class="bi bi-speedometer2"></i> Painel Admin</a>
+                    {% endif %}
+
+                    <a href="/carrinho" class="menu-link"><i class="bi bi-bag-check text-pink"></i> Ver Meu Carrinho</a>
+
+                    {% if session.get('usuario_id') %}
+                        <a href="/minhas-compras" class="menu-link">
+                            <i class="bi bi-clock-history text-pink"></i> Minhas Compras
+                        </a>
+                    {% endif %}
+                </div>
+
+                <hr class="border-secondary my-4">
+
+                <div>
+                    <p class="text-muted small text-uppercase fw-bold mb-2" style="letter-spacing: 1px;">Categorias</p>
+                    <a href="/" class="menu-link {% if not categoria_atual %}text-pink{% endif %}"><i class="bi bi-grid-sub text-pink"></i> Ver Tudo</a>
+                    {% for categoria in categories %}
+                        <a href="/?categoria={{ categoria }}{% if ordem_atual %}&ordem={{ ordem_atual }}{% endif %}" class="menu-link text-capitalize {% if categoria_atual == categoria %}text-pink{% endif %}">
+                            <i class="bi bi-tag-fill text-muted"></i> {{ categoria }}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="container mt-4">
+            <div class="hero-banner text-center">
+                <span class="text-pink text-uppercase fw-bold small d-block mb-2" style="letter-spacing: 3px; font-size: 0.85rem;">Exclusividade & Estilo</span>
+                <h1 class="display-5 fw-bold text-dark mb-2">Sua melhor versão está aqui</h1>
+                <p class="text-muted mx-auto mb-0 px-2" style="max-width: 600px; font-size: 0.95rem;">
+                    Looks marcantes selecionados especialmente para você.
+                </p>
+            </div>
+        </div>
+
+        <div class="container mb-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+                <div class="d-flex flex-wrap gap-2 justify-content-center">
+                    <a href="/{% if ordem_atual %}?ordem={{ ordem_atual }}{% endif %}" class="btn-filtro {% if not categoria_atual %}active{% endif %}">
+                        Ver Tudo
+                    </a>
+                    {% for categoria in categories %}
+                        <a href="/?categoria={{ categoria }}{% if ordem_atual %}&ordem={{ ordem_atual }}{% endif %}" class="btn-filtro {% if categoria_atual == categoria %}active{% endif %}">
+                            {{ categoria }}
+                        </a>
+                    {% endfor %}
+                </div>
+
+                <div class="w-100 text-center text-md-end" style="max-width: 220px;">
+                    <select class="form-select select-ordem w-100" onchange="location = this.value;">
+                        <option value="/?{% if categoria_atual %}categoria={{ categoria_atual }}&{% endif %}{% if busca %}q={{ busca }}&{% endif %}ordem=" {% if not ordem_atual %}selected{% endif %}>Organizar por</option>
+                        <option value="/?{% if categoria_atual %}categoria={{ categoria_atual }}&{% endif %}{% if busca %}q={{ busca }}&{% endif %}ordem=preco_min" {% if ordem_atual == 'preco_min' %}selected{% endif %}>Menor Preço</option>
+                        <option value="/?{% if categoria_atual %}categoria={{ categoria_atual }}&{% endif %}{% if busca %}q={{ busca }}&{% endif %}ordem=preco_max" {% if ordem_atual == 'preco_max' %}selected{% endif %}>Maior Preço</option>
+                        <option value="/?{% if categoria_atual %}categoria={{ categoria_atual }}&{% endif %}{% if busca %}q={{ busca }}&{% endif %}ordem=novidades" {% if ordem_atual == 'novidades' %}selected{% endif %}>Novidades</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="container mb-5">
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-dark border-0 shadow-sm small text-white bg-boutique-black mx-1">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% if busca or categoria_atual or ordem_atual %}
+                <div class="mb-3 d-flex justify-content-between align-items-center small px-1">
+                    <p class="text-muted m-0" style="font-size: 0.85rem;">
+                        Filtrado por: {% if categoria_atual %} <span class="badge bg-pink text-capitalize">{{ categoria_atual }}</span> {% endif %}
+                        {% if busca %} <strong>"{{ busca }}"</strong> {% endif %}
+                    </p>
+                    <a href="/" class="btn btn-sm btn-outline-dark py-1 px-3" style="font-size: 0.75rem; border-radius: 20px;">Limpar Filtros</a>
+                </div>
+            {% endif %}
+
+            <div class="row g-3 g-md-4 px-1">
+                {% for produto in produtos %}
+                <div class="col-6 col-md-6 col-lg-4 mb-2">
+                    <div class="product-card h-100 d-flex flex-column justify-content-between">
+
+                        <div>
+                            <a href="/produto/{{ produto.id }}" style="text-decoration: none; color: inherit;">
+                                <div class="img-container-responsive">
+                                    {% if produto.imagem_url %}
+                                        <img src="{{ url_for('static', filename='uploads/' ~ produto.imagem_url) }}" class="card-img-top" alt="{{ produto.nome }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                    {% else %}
+                                        <div class="d-flex align-items-center justify-content-center text-muted h-100 bg-light">
+                                            <span style="font-size: 0.8rem; font-weight: 500;">Sem foto</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="p-2 p-md-3">
+                                    <span class="text-uppercase text-pink fw-bold d-block mb-1" style="font-size: 0.65rem; letter-spacing: 0.8px;">
+                                        {{ produto.categoria }} {% if produto.tamanho and produto.tamanho.strip() %}- {{ produto.tamanho }}{% endif %}
+                                    </span>
+                                    <h6 class="fw-bold text-dark mb-1 text-truncate card-title-responsive" style="letter-spacing: -0.3px;">{{ produto.nome }}</h6>
+                                    <p class="text-muted small mb-0 text-truncate" style="font-size: 0.8rem;">{{ produto.descricao }}</p>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="p-2 p-md-3 pt-0">
+                            <div class="mb-2">
+                                <span class="fw-bold text-dark price-responsive" style="font-size: 1.15rem;">R$ {{ "%.2f"|format(produto.preco) }}</span>
+                            </div>
+
+                            <form action="/carrinho/adicionar/{{ produto.id }}" method="POST">
+                                <button type="submit" class="btn btn-pink w-100 py-2 text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.5px; border-radius: 6px;">
+                                    <i class="bi bi-cart-plus-fill"></i> Levar Peça
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+                {% else %}
+                <div class="col-12 text-center py-5">
+                    <i class="bi bi-box-seam display-4 text-muted d-block mb-3"></i>
+                    <p class="text-muted">Nenhum produto cadastrado nesta seção.</p>
+                </div>
+                {% endfor %}
+            </div>
         </div>
     </div>
 
-    <footer class="bg-boutique-black text-white py-4 mt-5 small border-top border-2 border-pink">
+    <footer class="bg-boutique-black text-white py-4 small border-top border-2 border-pink">
         <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 text-center text-md-start text-white-50">
             <div>
                 &copy; 2026 <strong class="text-white">Espaço Vanessa Cubula</strong>. Todos os direitos reservados.
@@ -421,6 +438,31 @@
         </div>
     </footer>
 
+    <div id="cookie-banner" class="bg-boutique-black text-white w-100 position-fixed bottom-0 start-0 p-3 shadow-lg" style="z-index: 1060; display: none; border-top: 1px solid rgba(255, 0, 127, 0.4); background-color: #111111;">
+        <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+            <p class="m-0 text-center text-md-start text-white-50" style="font-family: 'Montserrat', sans-serif; font-size: 0.85rem; letter-spacing: 0.3px;">
+                Para melhorar sua experiência no <strong class="text-white">Espaço VC</strong> e manter sua sacola salva durante a navegação, utilizamos cookies de acordo com a LGPD.
+            </p>
+            <button id="aceitar-cookie" class="btn btn-pink py-2 px-4 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px; border-radius: 6px;">
+                Aceitar e Continuar
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            if (!document.cookie.split('; ').find(row => row.startsWith('cookies_aceitos='))) {
+                document.getElementById('cookie-banner').style.display = 'block';
+            }
+
+            document.getElementById('aceitar-cookie').addEventListener('click', function () {
+                let dataExpiracao = new Date();
+                dataExpiracao.setTime(dataExpiracao.getTime() + (365 * 24 * 60 * 60 * 1000));
+                document.cookie = "cookies_aceitos=true; expires=" + dataExpiracao.toUTCString() + "; path=/; SameSite=Lax";
+                document.getElementById('cookie-banner').style.display = 'none';
+            });
+        });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
